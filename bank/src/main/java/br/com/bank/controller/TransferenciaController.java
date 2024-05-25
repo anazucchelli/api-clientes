@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.bank.exception.BusinessException;
+import br.com.bank.exception.TransferenciaException;
 import br.com.bank.model.Cliente;
 import br.com.bank.model.Transferencia;
 import br.com.bank.model.TransferenciaDTO;
@@ -29,7 +30,7 @@ public class TransferenciaController {
 
 	@PostMapping
 	public ResponseEntity<Object> realizarTransferencia(@Valid @RequestBody TransferenciaDTO transferenciaDTO)
-			throws BusinessException {
+			throws TransferenciaException {
 		try {
 			transferenciaService.realizarTransferencia(transferenciaDTO);
 			return ResponseEntity.ok().body("Transferencia realizada com sucesso");
@@ -39,7 +40,7 @@ public class TransferenciaController {
 	}
 
 	@GetMapping("/{numeroConta}")
-	public ResponseEntity<Object> buscarTransferencias(@PathVariable String numeroConta) {
+	public ResponseEntity<Object> buscarTransferencias(@PathVariable String numeroConta) throws TransferenciaException{
 		 try {
 		        List<Transferencia> transferencias = transferenciaService.buscarTransferencias(numeroConta);
 		        if (transferencias.isEmpty()) {
