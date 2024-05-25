@@ -30,8 +30,8 @@ public class ClienteController {
 	@PostMapping
 	public ResponseEntity<Object> cadastrarCliente(@Valid @RequestBody Cliente cliente) {
 		try {
-			Cliente novoCliente = clienteService.cadastrarCliente(cliente);
-			return ResponseEntity.status(201).body("Cliente cadastrado com sucesso: " + novoCliente.getId());
+			clienteService.cadastrarCliente(cliente);
+			return ResponseEntity.status(201).body("Cliente cadastrado com sucesso");
 		} catch (Exception e) {
 			return ResponseEntity.status(404).body("Erro ao cadastrar cliente: " + e.getMessage());
 		}

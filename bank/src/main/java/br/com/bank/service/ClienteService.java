@@ -16,18 +16,19 @@ public class ClienteService {
 	@Autowired
 	private ClienteRepository clienteRepository;
 	
-	public Cliente cadastrarCliente(Cliente cliente) {
-		return clienteRepository.save(cliente);
-	}
+	public Cliente cadastrarCliente(Cliente cliente) throws BusinessException {
+		if (clienteRepository.findByNumeroConta(cliente.getNumeroConta()).isPresent()) {
+            throw new BusinessException("Número de conta ja existente: " + cliente.getNumeroConta());
+        }
+        return clienteRepository.save(cliente);
+    }
 	
 	public List<Cliente> listarClientes(){
 		return clienteRepository.findAll();
 	}
 	
 	public Optional<Cliente> buscarNumeroConta(String numeroConta) {
-		System.out.println("Buscando cliente com numero da conta: " + numeroConta);
 		Optional<Cliente> cliente = clienteRepository.findByNumeroConta(numeroConta);
-		System.out.println("cliente encontrado: " + cliente);
 		return cliente;
     }
 }

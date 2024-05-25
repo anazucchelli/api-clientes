@@ -18,6 +18,7 @@ import br.com.bank.model.Cliente;
 import br.com.bank.model.Transferencia;
 import br.com.bank.model.TransferenciaDTO;
 import br.com.bank.service.TransferenciaService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/transferencias")
@@ -27,17 +28,14 @@ public class TransferenciaController {
 	private TransferenciaService transferenciaService;
 
 	@PostMapping
-	public ResponseEntity<Object> realizarTransferencia(@RequestBody TransferenciaDTO transferenciaDTO)
-			throws Exception {
+	public ResponseEntity<Object> realizarTransferencia(@Valid @RequestBody TransferenciaDTO transferenciaDTO)
+			throws BusinessException {
 		try {
-			Transferencia transferencia = transferenciaService.realizarTransferencia(transferenciaDTO.getContaOrigem(),
-					transferenciaDTO.getContaDestino(), transferenciaDTO.getValor());
-			return ResponseEntity.ok().body("Transferencia realizada com sucesso "+ transferencia.getId());
+			transferenciaService.realizarTransferencia(transferenciaDTO);
+			return ResponseEntity.ok().body("Transferencia realizada com sucesso");
 		} catch (BusinessException e) {
 			return ResponseEntity.badRequest().body("Erro ao realizar transferencia: " + e.getMessage());
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body("Erro interno do servidor: " + e.getMessage());
-		}
+		} 
 	}
 
 	@GetMapping("/{numeroConta}")
