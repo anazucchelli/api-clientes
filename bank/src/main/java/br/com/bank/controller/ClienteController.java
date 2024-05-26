@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.bank.exception.BusinessException;
 import br.com.bank.exception.ClienteException;
 import br.com.bank.model.Cliente;
+import br.com.bank.model.ClienteDTO;
 import br.com.bank.service.ClienteService;
 import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/v1/clientes")
@@ -26,9 +27,9 @@ public class ClienteController {
 	private ClienteService clienteService;
 
 	@PostMapping
-	public ResponseEntity<Object> cadastrarCliente(@Valid @RequestBody Cliente cliente) {
+	public ResponseEntity<Object> cadastrarCliente(@Valid @RequestBody ClienteDTO clienteDTO){
 		try {
-			clienteService.cadastrarCliente(cliente);
+			clienteService.cadastrarCliente(clienteDTO);
 			return ResponseEntity.status(201).body("Cliente cadastrado com sucesso");
 		} catch (Exception e) {
 			return ResponseEntity.status(404).body("Erro ao cadastrar cliente: " + e.getMessage());
@@ -36,7 +37,7 @@ public class ClienteController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Cliente>> listarClientes() throws BusinessException{
+	public ResponseEntity<List<Cliente>> listarClientes(){
 		List<Cliente> clientes = clienteService.listarClientes();
 		return ResponseEntity.ok(clientes);
 	}

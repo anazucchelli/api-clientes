@@ -1,5 +1,6 @@
 package br.com.bank.model;
 
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;

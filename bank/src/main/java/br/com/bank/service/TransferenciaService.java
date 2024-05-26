@@ -12,7 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.bank.exception.BusinessException;
+import br.com.bank.exception.SaldoInsuficienteException;
+import br.com.bank.exception.TransferenciaException;
 import br.com.bank.model.Cliente;
 import br.com.bank.model.Transferencia;
 import br.com.bank.model.TransferenciaDTO;
@@ -34,22 +35,22 @@ public class TransferenciaService {
 	private final Lock lock = new ReentrantLock();
 
 	@Transactional
-	public Transferencia realizarTransferencia(TransferenciaDTO transferenciaDTO) throws BusinessException {
+	public Transferencia realizarTransferencia(TransferenciaDTO transferenciaDTO) throws TransferenciaException {
 		lock.lock();
 		try {
 			logger.info("Iniciando transferência de {} para {}", transferenciaDTO.getContaOrigem(), transferenciaDTO.getContaDestino());
 
-			Optional<Cliente> origemOpt = clienteService.buscarNumeroConta(transferenciaDTO.getContaOrigem());
-			Cliente origem = origemOpt.orElseThrow(() -> new BusinessException("Conta de origem não encontrada"));
+			Optional<Cliente> origemOpt = clienteRepository.findByNumeroConta(transferenciaDTO.getContaOrigem());
+			Cliente origem = origemOpt.orElseThrow(() -> new TransferenciaException("Conta de origem não encontrada"));
 
-			Optional<Cliente> destinoOpt = clienteService.buscarNumeroConta(transferenciaDTO.getContaDestino());
-			Cliente destino = destinoOpt.orElseThrow(() -> new BusinessException("Conta de destino não encontrada"));
+			Optional<Cliente> destinoOpt = clienteRepository.findByNumeroConta(transferenciaDTO.getContaDestino());
+			Cliente destino = destinoOpt.orElseThrow(() -> new TransferenciaException("Conta de destino não encontrada"));
 
 				if (origem.getSaldo() < transferenciaDTO.getValor()) {
-					throw new BusinessException("Saldo insuficiente");
+					throw new SaldoInsuficienteException("Saldo insuficiente");
 				}
 				if (transferenciaDTO.getValor() > 100.00) {
-					throw new BusinessException("Valor acima do limite permitido");
+					throw new TransferenciaException("Valor acima do limite permitido");
 				}
 				// realiza a transferencia
 				origem.setSaldo(origem.getSaldo() - transferenciaDTO.getValor());
@@ -73,12 +74,13 @@ public class TransferenciaService {
         }
 	}
 
-	public List<Transferencia> buscarTransferencias(String numeroConta) throws BusinessException {
+	public List<Transferencia> buscarTransferencias(String numeroConta) throws TransferenciaException {
 		Optional<Cliente> clienteOpt = clienteService.buscarNumeroConta(numeroConta);
 		if (clienteOpt.isPresent()) {
 			Cliente cliente = clienteOpt.get();
 			return transferenciaRepository.findByContaOrigemOrContaDestinoOrderByDataDesc(cliente, cliente);
+		}else {
+			throw new TransferenciaException("Nenhuma transferência encontrada");
 		}
-		return null;
 	}
 }
