@@ -101,5 +101,4 @@ A aplicação utiliza códigos de resposta HTTP apropriados para indicar o suces
 201 Created: Recurso criado com sucesso.
 400 Bad Request: Requisição inválida.
 404 Not Found: Recurso não encontrado.
-409 Conflict: Conflito, como um número de conta já existente.
 
