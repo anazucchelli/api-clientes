@@ -16,7 +16,7 @@ public class ClienteService {
 	
 	@Autowired
 	private ClienteRepository clienteRepository;
-	
+
 	public Cliente cadastrarCliente(ClienteDTO clienteDTO) throws ClienteException {
 		if (clienteRepository.findByNumeroConta(clienteDTO.getNumeroConta()).isPresent()) {
             throw new ClienteException ("Número de conta ja existente: " + clienteDTO.getNumeroConta());

@@ -1,76 +1,120 @@
 package br.com.bank;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-
+import br.com.bank.controller.ClienteController;
 import br.com.bank.exception.ClienteException;
 import br.com.bank.model.Cliente;
 import br.com.bank.model.ClienteDTO;
 import br.com.bank.repository.ClienteRepository;
 import br.com.bank.service.ClienteService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 
-@ExtendWith(MockitoExtension.class)
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+
+
 @SpringBootTest
 public class ClienteTeste {
-
-    @InjectMocks
-    private ClienteService clienteService;
+	@InjectMocks
+    private ClienteController clienteController;
 
     @Mock
-    private ClienteRepository clienteRepository;
+    private ClienteService clienteService;
 
-    @Test
-    public void testCadastrarCliente() {
-        ClienteDTO clienteDTO = new ClienteDTO();
-        clienteDTO.setNome("Teste");
-        clienteDTO.setNumeroConta("789456");
-        clienteDTO.setSaldo(200.0);
-
-        when(clienteRepository.findByNumeroConta(clienteDTO.getNumeroConta())).thenReturn(Optional.empty());
-
-        Cliente cliente = Cliente.builder().nome("Teste").numeroConta("789456").saldo(200.0).build();
-        when(clienteRepository.save(any(Cliente.class))).thenReturn(cliente);
-
-        Cliente result = clienteService.cadastrarCliente(clienteDTO);
-
-        assertNotNull(result);
-        assertEquals(clienteDTO.getNome(), result.getNome());
-        assertEquals(clienteDTO.getNumeroConta(), result.getNumeroConta());
-        assertEquals(clienteDTO.getSaldo(), result.getSaldo());
-
-        verify(clienteRepository, times(1)).findByNumeroConta(clienteDTO.getNumeroConta());
-        verify(clienteRepository, times(1)).save(any(Cliente.class));
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testCadastrarCliente_ThrowsBusinessException() {
+    void testCadastrarCliente_Sucesso() throws ClienteException {
         ClienteDTO clienteDTO = new ClienteDTO();
-        clienteDTO.setNome("João");
-        clienteDTO.setNumeroConta("110497");
+        clienteDTO.setNome("John Doe");
+        clienteDTO.setNumeroConta("123456");
+        clienteDTO.setSaldo(100.0);
 
-        Cliente clienteExistente = Cliente.builder().nome("Outro Cliente").numeroConta("2007").saldo(100.0).build();
-        when(clienteRepository.findByNumeroConta(clienteDTO.getNumeroConta())).thenReturn(Optional.of(clienteExistente));
+        Cliente cliente = new Cliente();
+        cliente.setNome("John Doe");
+        cliente.setNumeroConta("123456");
+        cliente.setSaldo(100.0);
 
-        ClienteException exception = assertThrows(ClienteException.class, () -> {
-            clienteService.cadastrarCliente(clienteDTO);
+        when(clienteService.cadastrarCliente(clienteDTO)).thenReturn(cliente);
+
+        ResponseEntity<Object> response = clienteController.cadastrarCliente(clienteDTO);
+
+        assertEquals(CREATED.value(), response.getStatusCode().value());
+        assertEquals("Cliente cadastrado com sucesso", response.getBody());
+    }
+
+    @Test
+    void testCadastrarCliente_ClienteException() throws ClienteException {
+        ClienteDTO clienteDTO = new ClienteDTO();
+        clienteDTO.setNome("John Doe");
+        clienteDTO.setNumeroConta("123456");
+        clienteDTO.setSaldo(100.0);
+
+        doThrow(new ClienteException("Número de conta já existente: " + clienteDTO.getNumeroConta()))
+                .when(clienteService).cadastrarCliente(clienteDTO);
+
+        ResponseEntity<Object> response = clienteController.cadastrarCliente(clienteDTO);
+
+        assertEquals(404, response.getStatusCode().value());
+        assertEquals("Erro ao cadastrar cliente: Número de conta já existente: 123456", response.getBody());
+    }
+
+    @Test
+    void testListarClientes_Sucesso() throws ClienteException {
+        Cliente cliente = new Cliente();
+        when(clienteService.listarClientes()).thenReturn(Collections.singletonList(cliente));
+
+        ResponseEntity<List<Cliente>> response = clienteController.listarClientes();
+
+        assertEquals(OK.value(), response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().size());
+    }
+
+    @Test
+    void testListarClientes_ClienteException() throws ClienteException {
+        doThrow(new ClienteException("Lista de clientes está vazia")).when(clienteService).listarClientes();
+
+        ClienteException thrown = assertThrows(ClienteException.class, () -> {
+            clienteController.listarClientes();
         });
 
-        assertEquals("Número de conta já existente: 12345", exception.getMessage());
-        verify(clienteRepository, times(1)).findByNumeroConta(clienteDTO.getNumeroConta());
-        verify(clienteRepository, times(0)).save(any(Cliente.class));
+        assertEquals("Lista de clientes está vazia", thrown.getMessage());
     }
+
+    @Test
+    void testBuscarNumeroConta_Sucesso() throws ClienteException {
+        Cliente cliente = new Cliente();
+        when(clienteService.buscarNumeroConta("123456")).thenReturn(Optional.of(cliente));
+
+        ResponseEntity<Cliente> response = clienteController.buscarNumeroConta("123456");
+
+        assertEquals(OK.value(), response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertEquals(cliente, response.getBody());
+    }
+
+    @Test
+    void testBuscarNumeroConta_ClienteException() throws ClienteException {
+        when(clienteService.buscarNumeroConta("123456")).thenReturn(Optional.empty());
+
+        ResponseEntity<Cliente> response = clienteController.buscarNumeroConta("123456");
+
+        assertEquals(404, response.getStatusCode().value());
+    }    
 }

@@ -31,47 +31,49 @@ public class TransferenciaService {
 	private ClienteService clienteService;
 	@Autowired
 	private ClienteRepository clienteRepository;
-	
+
 	private final Lock lock = new ReentrantLock();
 
 	@Transactional
 	public Transferencia realizarTransferencia(TransferenciaDTO transferenciaDTO) throws TransferenciaException {
 		lock.lock();
 		try {
-			logger.info("Iniciando transferência de {} para {}", transferenciaDTO.getContaOrigem(), transferenciaDTO.getContaDestino());
+			logger.info("Iniciando transferência de {} para {}", transferenciaDTO.getContaOrigem(),
+					transferenciaDTO.getContaDestino());
 
 			Optional<Cliente> origemOpt = clienteRepository.findByNumeroConta(transferenciaDTO.getContaOrigem());
 			Cliente origem = origemOpt.orElseThrow(() -> new TransferenciaException("Conta de origem não encontrada"));
 
 			Optional<Cliente> destinoOpt = clienteRepository.findByNumeroConta(transferenciaDTO.getContaDestino());
-			Cliente destino = destinoOpt.orElseThrow(() -> new TransferenciaException("Conta de destino não encontrada"));
+			Cliente destino = destinoOpt
+					.orElseThrow(() -> new TransferenciaException("Conta de destino não encontrada"));
 
-				if (origem.getSaldo() < transferenciaDTO.getValor()) {
-					throw new SaldoInsuficienteException("Saldo insuficiente");
-				}
-				if (transferenciaDTO.getValor() > 100.00) {
-					throw new TransferenciaException("Valor acima do limite permitido");
-				}
-				// realiza a transferencia
-				origem.setSaldo(origem.getSaldo() - transferenciaDTO.getValor());
-				destino.setSaldo(destino.getSaldo() + transferenciaDTO.getValor());
-				// atualiza os dados
-				clienteRepository.save(origem);
-				clienteRepository.save(destino);
+			if (origem.getSaldo() < transferenciaDTO.getValor()) {
+				throw new SaldoInsuficienteException("Saldo insuficiente");
+			}
+			if (transferenciaDTO.getValor() > 100.00) {
+				throw new TransferenciaException("Valor acima do limite permitido");
+			}
+			// realiza a transferencia
+			origem.setSaldo(origem.getSaldo() - transferenciaDTO.getValor());
+			destino.setSaldo(destino.getSaldo() + transferenciaDTO.getValor());
+			// atualiza os dados
+			clienteRepository.save(origem);
+			clienteRepository.save(destino);
 
-				Transferencia transferencia = new Transferencia();
-				transferencia.setContaOrigem(origem);
-				transferencia.setContaDestino(destino);
-				transferencia.setValor(transferenciaDTO.getValor());
-				transferencia.setData(new Date());
-				transferencia.setSucesso(true);
-				transferenciaRepository.save(transferencia);
+			Transferencia transferencia = new Transferencia();
+			transferencia.setContaOrigem(origem);
+			transferencia.setContaDestino(destino);
+			transferencia.setValor(transferenciaDTO.getValor());
+			transferencia.setData(new Date());
+			transferencia.setSucesso(true);
+			transferenciaRepository.save(transferencia);
 
-				logger.info("Transferência concluída");
-				return transferencia;
+			logger.info("Transferência concluída");
+			return transferencia;
 		} finally {
-            lock.unlock();
-        }
+			lock.unlock();
+		}
 	}
 
 	public List<Transferencia> buscarTransferencias(String numeroConta) throws TransferenciaException {
@@ -79,7 +81,7 @@ public class TransferenciaService {
 		if (clienteOpt.isPresent()) {
 			Cliente cliente = clienteOpt.get();
 			return transferenciaRepository.findByContaOrigemOrContaDestinoOrderByDataDesc(cliente, cliente);
-		}else {
+		} else {
 			throw new TransferenciaException("Nenhuma transferência encontrada");
 		}
 	}
