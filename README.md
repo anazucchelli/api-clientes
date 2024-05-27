@@ -83,7 +83,6 @@ Este projeto expõe APIs no padrão REST (JSON) para gerenciar clientes e realiz
 1. Clone o repositório:
    ```sh
    git clone [https://github.com/anazucchelli/api-clientes.git
-   cd api-clientes
 
 2. Compile o projeto com Maven:
   `mvn clean install`
@@ -107,4 +106,3 @@ A aplicação utiliza códigos de resposta HTTP apropriados para indicar o suces
    `http://localhost:8080/swagger-ui.html`
 
 ![image](https://github.com/anazucchelli/api-clientes/assets/39284021/8711160f-fabf-4a00-ad3b-ebdfeb917433)
-
