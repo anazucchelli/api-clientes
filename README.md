@@ -27,7 +27,7 @@ Este projeto expõe APIs no padrão REST (JSON) para gerenciar clientes e realiz
      ```
    - **Response:**
      - `201 Created` em caso de sucesso.
-     - `409 Conflict` se o número da conta já existir.
+     - `404 Not found` se o número da conta já existir.
      - `400 Bad Request` para erros de validação.
 
 2. **Listar Todos os Clientes**
@@ -41,7 +41,7 @@ Este projeto expõe APIs no padrão REST (JSON) para gerenciar clientes e realiz
    - **Endpoint:** `GET /api/v1/clientes/{numeroConta}`
    - **Response:**
      - `200 OK` com os dados do cliente.
-     - `404 Not Found` se o cliente não for encontrado.
+     - `400 Bad Request` se o cliente não for encontrado.
 
 4. **Realizar Transferência**
 
@@ -57,7 +57,7 @@ Este projeto expõe APIs no padrão REST (JSON) para gerenciar clientes e realiz
    - **Response:**
      - `200 OK` em caso de sucesso.
      - `400 Bad Request` para saldo insuficiente ou valor acima do limite permitido.
-     - `404 Not Found` se a conta de origem ou destino não for encontrada.
+     - `400 Bad Request` se a conta de origem ou destino não for encontrada.
 
 5. **Buscar Transferências de uma Conta**
 
@@ -75,8 +75,8 @@ Este projeto expõe APIs no padrão REST (JSON) para gerenciar clientes e realiz
 
 ### Pré-requisitos
 
-- JDK 11 ou superior instalado
-- Maven ou Gradle instalado
+- JDK 17
+- Maven
 
 ### Configuração
 
