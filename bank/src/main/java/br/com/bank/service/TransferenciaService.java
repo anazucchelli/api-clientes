@@ -49,7 +49,7 @@ public class TransferenciaService {
 					.orElseThrow(() -> new TransferenciaException("Conta de destino não encontrada"));
 			
 			if (transferenciaDTO.getValor() > 100.00) {
-				throw new TransferenciaException("Valor acima do limite permitido");
+				throw new SaldoInsuficienteException("Valor acima do limite permitido");
 			}
 
 			if (origem.getSaldo() < transferenciaDTO.getValor()) {
@@ -67,7 +67,7 @@ public class TransferenciaService {
 			transferencia.setContaOrigem(origem);
 			transferencia.setContaDestino(destino);
 			transferencia.setValor(transferenciaDTO.getValor());
-			transferencia.setData(new Date());
+			transferencia.setData(new Date());	
 			transferencia.setSucesso(true);
 			transferenciaRepository.save(transferencia);
 

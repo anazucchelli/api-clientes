@@ -14,6 +14,7 @@ import br.com.bank.model.Transferencia;
 import br.com.bank.model.TransferenciaDTO;
 import br.com.bank.repository.ClienteRepository;
 import br.com.bank.repository.TransferenciaRepository;
+import br.com.bank.service.ClienteService;
 import br.com.bank.service.TransferenciaService;
 
 import java.util.Arrays;
@@ -38,7 +39,10 @@ public class TransferenciaTest {
 
     @Mock
     private TransferenciaRepository transferenciaRepository;
-
+    
+    @Mock
+    private ClienteService clienteService;
+    
     private Cliente contaOrigem;
     private Cliente contaDestino;
 
