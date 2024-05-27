@@ -67,8 +67,8 @@ Este projeto expõe APIs no padrão REST (JSON) para gerenciar clientes e realiz
 
 ## Requisitos
 
-- Java 11 ou superior
-- Maven ou Gradle
+- Java 17
+- Maven 
 - Banco de dados em memória (H2)
 
 ## Configuração e Execução
