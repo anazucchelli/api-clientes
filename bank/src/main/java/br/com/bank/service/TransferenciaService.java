@@ -47,13 +47,15 @@ public class TransferenciaService {
 			Optional<Cliente> destinoOpt = clienteRepository.findByNumeroConta(transferenciaDTO.getContaDestino());
 			Cliente destino = destinoOpt
 					.orElseThrow(() -> new TransferenciaException("Conta de destino não encontrada"));
+			
+			if (transferenciaDTO.getValor() > 100.00) {
+				throw new TransferenciaException("Valor acima do limite permitido");
+			}
 
 			if (origem.getSaldo() < transferenciaDTO.getValor()) {
 				throw new SaldoInsuficienteException("Saldo insuficiente");
 			}
-			if (transferenciaDTO.getValor() > 100.00) {
-				throw new TransferenciaException("Valor acima do limite permitido");
-			}
+			
 			// realiza a transferencia
 			origem.setSaldo(origem.getSaldo() - transferenciaDTO.getValor());
 			destino.setSaldo(destino.getSaldo() + transferenciaDTO.getValor());

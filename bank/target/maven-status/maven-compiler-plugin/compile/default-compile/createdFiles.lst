@@ -1,14 +1,10 @@
 br\com\bank\repository\TransferenciaRepository.class
 br\com\bank\repository\ClienteRepository.class
-br\com\bank\service\ClienteService.class
 br\com\bank\BankApplication.class
-br\com\bank\model\ClienteResponseDTO.class
-br\com\bank\model\Transferencia.class
-br\com\bank\model\ClienteRequestDTO.class
-br\com\bank\model\Cliente.class
 br\com\bank\controller\ClienteController.class
-br\com\bank\mapper\ClienteMapper.class
 br\com\bank\service\TransferenciaService.class
+br\com\bank\service\ClienteService.class
+br\com\bank\model\Transferencia.class
+br\com\bank\model\Cliente.class
 br\com\bank\controller\TransferenciaController.class
 br\com\bank\model\TransferenciaDTO.class
-br\com\bank\exception\BusinessException.class

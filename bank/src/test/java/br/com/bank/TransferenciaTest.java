@@ -1,5 +1,12 @@
 package br.com.bank;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import br.com.bank.exception.SaldoInsuficienteException;
 import br.com.bank.exception.TransferenciaException;
 import br.com.bank.model.Cliente;
@@ -8,12 +15,6 @@ import br.com.bank.model.TransferenciaDTO;
 import br.com.bank.repository.ClienteRepository;
 import br.com.bank.repository.TransferenciaRepository;
 import br.com.bank.service.TransferenciaService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class TransferenciaServiceTest {
+public class TransferenciaTest {
 
     @InjectMocks
     private TransferenciaService transferenciaService;

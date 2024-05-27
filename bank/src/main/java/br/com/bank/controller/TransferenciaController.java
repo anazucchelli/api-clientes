@@ -33,7 +33,7 @@ public class TransferenciaController {
 			transferenciaService.realizarTransferencia(transferenciaDTO);
 			return ResponseEntity.ok().body("Transferencia realizada com sucesso");
 		} catch (TransferenciaException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao realizar transferencia: " + e.getMessage());
+			return ResponseEntity.badRequest().body("Erro ao realizar transferencia: " + e.getMessage());
 		}
 	}
 

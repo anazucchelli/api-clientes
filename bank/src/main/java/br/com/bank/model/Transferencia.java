@@ -1,6 +1,5 @@
 package br.com.bank.model;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
@@ -24,7 +23,7 @@ public class Transferencia {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 	@ManyToOne
 	private Cliente contaOrigem;
 	@ManyToOne

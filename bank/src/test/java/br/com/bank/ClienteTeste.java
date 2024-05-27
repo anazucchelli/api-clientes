@@ -1,10 +1,5 @@
 package br.com.bank;
-import br.com.bank.controller.ClienteController;
-import br.com.bank.exception.ClienteException;
-import br.com.bank.model.Cliente;
-import br.com.bank.model.ClienteDTO;
-import br.com.bank.repository.ClienteRepository;
-import br.com.bank.service.ClienteService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +8,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+
+import br.com.bank.controller.ClienteController;
+import br.com.bank.exception.ClienteException;
+import br.com.bank.model.Cliente;
+import br.com.bank.model.ClienteDTO;
+import br.com.bank.service.ClienteService;
 
 import java.util.Collections;
 import java.util.List;
