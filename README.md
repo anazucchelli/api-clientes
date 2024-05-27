@@ -75,8 +75,8 @@ Este projeto expõe APIs no padrão REST (JSON) para gerenciar clientes e realiz
 
 ### Pré-requisitos
 
-- JDK 11 ou superior instalado
-- Maven ou Gradle instalado
+- JDK 17
+- Maven
 
 ### Configuração
 
